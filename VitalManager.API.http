@@ -1,0 +1,6 @@
+@VitalManager.API_HostAddress = http://localhost:5094
+
+GET {{VitalManager.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
