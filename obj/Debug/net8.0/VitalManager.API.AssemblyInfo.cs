@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("VitalManager.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+15f8bb3a352f255fd462950d43315cfb7364a59e")]
 [assembly: System.Reflection.AssemblyProductAttribute("VitalManager.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("VitalManager.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

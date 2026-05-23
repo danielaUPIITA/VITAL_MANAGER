@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using VitalManager.API.Models;
-using VitalManager.API.Data; // Asegúrate que este namespace coincida con tu DbContext
+using VitalManager.API.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VitalManager.API.Controllers
 {
@@ -18,12 +19,15 @@ namespace VitalManager.API.Controllers
             _context = context;
         }
 
+        // 🔓 Acceso libre (puedes protegerlo si lo deseas)
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InsumoMedico>>> GetInsumos()
         {
             return await _context.InsumosMedicos.ToListAsync();
         }
 
+        // Solo Enfermera puede registrar insumos
+        [Authorize(Roles = "JefaEnfermeras")]
         [HttpPost]
         public async Task<ActionResult<InsumoMedico>> PostInsumo(InsumoMedico insumo)
         {
@@ -33,6 +37,8 @@ namespace VitalManager.API.Controllers
             return CreatedAtAction(nameof(GetInsumos), new { id = insumo.Id }, insumo);
         }
 
+        // Solo Jefa de Enfermeras puede eliminar insumos
+        [Authorize(Roles = "JefaEnfermeras")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInsumo(int id)
         {

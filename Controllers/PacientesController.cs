@@ -16,6 +16,12 @@ namespace VitalManager.API.Controllers
             _context = context;
         }
 
+        [HttpGet("ping")]
+public IActionResult Ping()
+{
+    return Ok("pong");
+}
+
         // GET: api/pacientes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Paciente>>> GetPacientes()
@@ -69,5 +75,7 @@ namespace VitalManager.API.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+        
+
     }
 }

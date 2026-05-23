@@ -1,7 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using VitalManager.API.Data;
-using VitalManager.API.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace VitalManager.API.Controllers
 {
@@ -9,49 +10,54 @@ namespace VitalManager.API.Controllers
     [Route("api/[controller]")]
     public class RolesController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public RolesController(ApplicationDbContext context)
+        public RolesController(RoleManager<IdentityRole> roleManager)
         {
-            _context = context;
+            _roleManager = roleManager;
         }
 
+        // GET: api/roles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Rol>>> Get() =>
-            await _context.Roles.ToListAsync();
+        public ActionResult<IEnumerable<IdentityRole>> GetRoles()
+        {
+            var roles = _roleManager.Roles.ToList();
+            return Ok(roles);
+        }
 
+        // GET: api/roles/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Rol>> Get(int id)
+        public async Task<ActionResult<IdentityRole>> GetRole(string id)
         {
-            var rol = await _context.Roles.FindAsync(id);
-            return rol == null ? NotFound() : Ok(rol);
+            var role = await _roleManager.FindByIdAsync(id);
+            return role == null ? NotFound() : Ok(role);
         }
 
+        // POST: api/roles
         [HttpPost]
-        public async Task<ActionResult<Rol>> Post(Rol rol)
+        public async Task<IActionResult> CreateRole([FromBody] string roleName)
         {
-            _context.Roles.Add(rol);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(Get), new { id = rol.Id }, rol);
+            if (string.IsNullOrWhiteSpace(roleName))
+                return BadRequest("El nombre del rol es obligatorio.");
+
+            var role = new IdentityRole(roleName);
+            var result = await _roleManager.CreateAsync(role);
+
+            if (result.Succeeded)
+                return Ok($"Rol '{roleName}' creado correctamente.");
+            else
+                return BadRequest(result.Errors);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Rol rol)
-        {
-            if (id != rol.Id) return BadRequest();
-            _context.Entry(rol).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
-
+        // DELETE: api/roles/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteRole(string id)
         {
-            var rol = await _context.Roles.FindAsync(id);
-            if (rol == null) return NotFound();
-            _context.Roles.Remove(rol);
-            await _context.SaveChangesAsync();
-            return NoContent();
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role == null) return NotFound();
+
+            var result = await _roleManager.DeleteAsync(role);
+            return result.Succeeded ? NoContent() : BadRequest(result.Errors);
         }
     }
 }
